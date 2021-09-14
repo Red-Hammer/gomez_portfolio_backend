@@ -47,5 +47,10 @@ def write_file_metadata(data, image_size) -> None:
         db.session.commit()
 
 
-def read_file_metadata():
-    pass
+def read_file_metadata() -> list:
+    images = Image.query.all()
+    output_list = []
+    for i in images:
+        output_list.append(i.api_to_dict())
+
+    return output_list

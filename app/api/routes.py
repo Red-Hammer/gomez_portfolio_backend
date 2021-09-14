@@ -1,44 +1,17 @@
 from flask import url_for, request
 from app.api import bp
 from app.helpers import _construct_standard_response, _build_cors_preflight_response
-from app.api.image_handling import allowed_file, write_image, write_file_metadata
+from app.api.image_handling import allowed_file, write_image, write_file_metadata, read_file_metadata
 
 
 @bp.route('/photos', methods=['GET', 'OPTIONS'])
 def photos():
-    x = [
-        {
-            'src': "https://c2.staticflickr.com/9/8817/28973449265_07e3aa5d2e_b.jpg",
-            'thumbnail': "https://c2.staticflickr.com/9/8817/28973449265_07e3aa5d2e_n.jpg",
-            'thumbnailWidth': 320,
-            'thumbnailHeight': 174,
-            'caption': "After Rain (Jeshu John - designerspics.com)"
-        },
-        {
-            "src": "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_b.jpg",
-            "thumbnail": "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_n.jpg",
-            "thumbnailWidth": 320,
-            "thumbnailHeight": 212,
-            "tags": [{"value": "Ocean", "title": "Ocean"}, {"value": "People", "title": "People"}],
-            "caption": "Boats (Jeshu John - designerspics.com)"
-        },
+    if request.method == 'OPTIONS':
+        return _build_cors_preflight_response()
 
-        {
-            'src': "https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_b.jpg",
-            'thumbnail': "https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_n.jpg",
-            "thumbnailWidth": 320,
-            "thumbnailHeight": 212
-        },
-        {
-            'src': str(url_for('static', filename='images/Ramen_Eggesecute_smaller.png', _external=True)),
-            # Need to host these on a CDN
-            'thumbnail': str(url_for('static', filename='images/Ramen_Eggesecute_smaller.png', _external=True)),
-            "thumbnailWidth": 320,
-            "thumbnailHeight": 212
-        }
-    ]
-
-    return _construct_standard_response(x)
+    if request.method == 'GET':
+        images = read_file_metadata()
+        return _construct_standard_response(images)
 
 
 @bp.route('/uploadImage', methods=['POST', 'OPTIONS'])

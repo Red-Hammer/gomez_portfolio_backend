@@ -15,12 +15,12 @@ class Image(db.Model):
 
     def __repr__(self):
         return '<Image Metadata {}'.format(str(self.id) + ' ' + str(self.name) + ' '
-                                           + str(self.size * 1000)
+                                           + str(self.size / 1000) + ' Filename:' + str(self.filename)
                                            )
 
 
     def api_to_dict(self):
-        src = str(url_for('static', filename='images/' + self.filename))
+        src = str(url_for('static', filename='images/' + self.filename, _external=True))
         image_dict = {'src': src,
                       'thumbnail': src,
                       'thumbnailWidth': 320,

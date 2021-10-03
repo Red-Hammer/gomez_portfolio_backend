@@ -11,6 +11,7 @@ class Image(db.Model):
     name = db.Column(db.Unicode(255))
     caption = db.Column(db.Unicode(500))
     last_modified_date = db.Column(db.DateTime)
+    homepage_ind = db.Column(db.Boolean, default=False)
 
 
     def __repr__(self):

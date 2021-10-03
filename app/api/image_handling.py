@@ -25,7 +25,7 @@ def write_image(file):
     return os.stat(Path(Config.UPLOAD_FOLDER, safe_filename)).st_size
 
 
-def write_file_metadata(data, image_size) -> None:
+def write_file_metadata(data, image_size: int, homepage_ind: bool) -> None:
     image_meta = Image.query.filter_by(filename=data.filename).first()
 
     if image_meta is None:
@@ -35,7 +35,8 @@ def write_file_metadata(data, image_size) -> None:
                 size=image_size,
                 name='.'.join(data.filename.split('.')[:-1]),
                 caption='placeholder for now',
-                last_modified_date=datetime.now()
+                last_modified_date=datetime.now(),
+                homepage_ind=homepage_ind
         )
         db.session.add(new_image)
         db.session.commit()
@@ -44,12 +45,18 @@ def write_file_metadata(data, image_size) -> None:
         image_meta.size = image_size
         image_meta.caption = 'New Caption'
         image_meta.last_modified_date = datetime.now()
+        image_meta.homepage_ind = homepage_ind
         db.session.commit()
 
 
-def read_file_metadata() -> list:
-    images = Image.query.all()
+def read_file_metadata(homepage: bool = False) -> list:
     output_list = []
+
+    if not homepage:
+        images = Image.query.all()
+    else:
+        images = Image.query.filter_by(homepage_ind=1).all()
+
     for i in images:
         output_list.append(i.api_to_dict())
 

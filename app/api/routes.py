@@ -98,6 +98,10 @@ def admin():
 
             return redirect(url_for('api.admin'))
 
+        else:
+            flash('This filetype is not allowed')
+            return redirect(url_for('main.home'))
+
     return render_template(
             'image-upload.html',
             title='Admin',

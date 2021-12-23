@@ -85,7 +85,38 @@ def auth():
 @bp.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    return "you made it!"
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file attached')
+            return redirect(url_for('api.admin'))
+
+        file = request.files['file']
+        homepage_ind = request.form['isHomepage']
+
+        if homepage_ind == 'true':
+            homepage_ind = True
+        else:
+            homepage_ind = False
+
+        if file.filename == '':
+            flash('Filename is blank')
+
+        # Move the file to a place
+        if file and allowed_file(file.filename):
+            image_size, safe_filename = write_image(file)
+
+            write_file_metadata(file, image_size, homepage_ind, safe_filename)
+
+            return redirect(url_for('api.admin'))
+
+    return '''  <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=checkbox name=isHomepage>
+      <input type=submit value=Upload>
+    </form>'''
 
 
 @bp.route('/logout')

@@ -6,6 +6,6 @@ from app.main import bp
 @bp.route('/home')
 def home():
     return render_template(
-        'home.html',
+            'base.html',
         title='Home',
     )

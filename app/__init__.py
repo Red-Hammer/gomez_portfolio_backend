@@ -7,11 +7,13 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 from flask_bootstrap import Bootstrap
+from flask_login import LoginManager
 
 db = SQLAlchemy()
 migrate = Migrate()
 mail = Mail()
 bootstrap = Bootstrap()
+login = LoginManager()
 
 
 def create_app(config_class=Config):
@@ -22,6 +24,8 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     mail.init_app(app)
     bootstrap.init_app(app)
+    login.init_app(app)
+    login.login_view = 'api.auth'
 
     from app.main import bp as main_bp
 

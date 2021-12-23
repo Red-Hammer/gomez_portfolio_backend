@@ -4,7 +4,7 @@ from app.helpers import _construct_standard_response, _build_cors_preflight_resp
 from app.api.image_handling import allowed_file, write_image, write_file_metadata, read_file_metadata
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Admin
-from app.api.forms import LoginForm
+from app.api.forms import LoginForm, FileUpload
 
 
 @bp.route('/gallery-photos', methods=['GET', 'OPTIONS'])
@@ -85,23 +85,12 @@ def auth():
 @bp.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            flash('No file attached')
-            return redirect(url_for('api.admin'))
+    form = FileUpload()
 
-        file = request.files['file']
-        homepage_ind = request.form['isHomepage']
+    if form.validate_on_submit():
+        file = form.file.data
+        homepage_ind = form.is_homepage.data
 
-        if homepage_ind == 'true':
-            homepage_ind = True
-        else:
-            homepage_ind = False
-
-        if file.filename == '':
-            flash('Filename is blank')
-
-        # Move the file to a place
         if file and allowed_file(file.filename):
             image_size, safe_filename = write_image(file)
 
@@ -109,14 +98,11 @@ def admin():
 
             return redirect(url_for('api.admin'))
 
-    return '''  <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=checkbox name=isHomepage>
-      <input type=submit value=Upload>
-    </form>'''
+    return render_template(
+            'image-upload.html',
+            title='Admin',
+            form=form
+    )
 
 
 @bp.route('/logout')

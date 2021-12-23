@@ -51,9 +51,9 @@ def upload_image():
 
         # Move the file to a place
         if file and allowed_file(file.filename):
-            image_size = write_image(file)
+            image_size, safe_filename = write_image(file)
 
-            write_file_metadata(file, image_size, homepage_ind)
+            write_file_metadata(file, image_size, homepage_ind, safe_filename)
 
             response = {'status': 'Success', 'message': 'The file was saved'}
 

@@ -22,16 +22,16 @@ def write_image(file):
     safe_filename = secure_filename(file.filename)
     file.save(Path(Config.UPLOAD_FOLDER, safe_filename))
 
-    return os.stat(Path(Config.UPLOAD_FOLDER, safe_filename)).st_size
+    return os.stat(Path(Config.UPLOAD_FOLDER, safe_filename)).st_size, safe_filename
 
 
-def write_file_metadata(data, image_size: int, homepage_ind: bool) -> None:
+def write_file_metadata(data, image_size: int, homepage_ind: bool, safe_filename: str) -> None:
     image_meta = Image.query.filter_by(filename=data.filename).first()
 
     if image_meta is None:
         new_image = Image(
                 upload_date=datetime.now(),
-                filename=data.filename,
+                filename=safe_filename,
                 size=image_size,
                 name='.'.join(data.filename.split('.')[:-1]),
                 caption='placeholder for now',

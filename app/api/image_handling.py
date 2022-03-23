@@ -3,22 +3,31 @@ from pathlib import Path
 from datetime import datetime
 import os
 
+
 from config import Config
 from app.models import Image
 from app import db
 
-# Have a function iterate through it and return a list of dicts to jsonify
 
-# File Handling Stuff
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
 
-def allowed_file(filename):
+def allowed_file(filename: str):
+    """
+    checks to make sure the filename contains a valid extension
+    :param filename: filename to check
+    :return: bool
+    """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def write_image(file):
+    """
+    Saves an image file stream to
+    :param file:
+    :return:
+    """
     safe_filename = secure_filename(file.filename)
     file.save(Path(Config.UPLOAD_FOLDER, safe_filename))
 
